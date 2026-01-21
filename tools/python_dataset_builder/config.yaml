@@ -1,0 +1,279 @@
+# Python Dataset Builder Configuration
+# =====================================
+# This configuration file controls the dataset generation process for
+# Python language training data.
+
+# Output settings
+output:
+  base_dir: "~/.cache/nanochat/python_dataset"
+  # Output formats: jsonl, parquet, or both
+  formats:
+    - jsonl
+    - parquet
+  # Compression for parquet files
+  parquet_compression: zstd
+  parquet_compression_level: 3
+
+# PyPI Documentation Scraper Settings
+pypi_docs:
+  enabled: true
+  output_subdir: "pypi_docs"
+
+  # Top Python packages to scrape documentation for
+  # Add or remove packages as needed
+  packages:
+    # Web frameworks
+    - name: django
+      docs_url: https://docs.djangoproject.com/en/stable/
+      doc_type: sphinx
+    - name: flask
+      docs_url: https://flask.palletsprojects.com/
+      doc_type: sphinx
+    - name: fastapi
+      docs_url: https://fastapi.tiangolo.com/
+      doc_type: mkdocs
+
+    # Data science
+    - name: numpy
+      docs_url: https://numpy.org/doc/stable/
+      doc_type: sphinx
+    - name: pandas
+      docs_url: https://pandas.pydata.org/docs/
+      doc_type: sphinx
+    - name: scikit-learn
+      docs_url: https://scikit-learn.org/stable/
+      doc_type: sphinx
+    - name: matplotlib
+      docs_url: https://matplotlib.org/stable/
+      doc_type: sphinx
+
+    # Machine learning
+    - name: torch
+      docs_url: https://pytorch.org/docs/stable/
+      doc_type: sphinx
+    - name: tensorflow
+      docs_url: https://www.tensorflow.org/api_docs/python/
+      doc_type: custom
+    - name: transformers
+      docs_url: https://huggingface.co/docs/transformers/
+      doc_type: custom
+
+    # Utilities
+    - name: requests
+      docs_url: https://requests.readthedocs.io/
+      doc_type: sphinx
+    - name: aiohttp
+      docs_url: https://docs.aiohttp.org/
+      doc_type: sphinx
+    - name: httpx
+      docs_url: https://www.python-httpx.org/
+      doc_type: mkdocs
+    - name: pydantic
+      docs_url: https://docs.pydantic.dev/
+      doc_type: mkdocs
+    - name: sqlalchemy
+      docs_url: https://docs.sqlalchemy.org/
+      doc_type: sphinx
+    - name: pytest
+      docs_url: https://docs.pytest.org/
+      doc_type: sphinx
+    - name: click
+      docs_url: https://click.palletsprojects.com/
+      doc_type: sphinx
+    - name: rich
+      docs_url: https://rich.readthedocs.io/
+      doc_type: sphinx
+    - name: typer
+      docs_url: https://typer.tiangolo.com/
+      doc_type: mkdocs
+
+    # Async
+    - name: asyncio
+      docs_url: https://docs.python.org/3/library/asyncio.html
+      doc_type: python_stdlib
+    - name: trio
+      docs_url: https://trio.readthedocs.io/
+      doc_type: sphinx
+
+    # CLI & DevOps
+    - name: boto3
+      docs_url: https://boto3.amazonaws.com/v1/documentation/api/latest/
+      doc_type: sphinx
+    - name: celery
+      docs_url: https://docs.celeryq.dev/
+      doc_type: sphinx
+
+  # Scraping settings
+  scraper:
+    # Maximum pages to scrape per package (0 = unlimited)
+    max_pages_per_package: 500
+    # Delay between requests (seconds)
+    request_delay: 0.5
+    # Timeout for each request (seconds)
+    request_timeout: 30
+    # Maximum retries per URL
+    max_retries: 3
+    # User agent string
+    user_agent: "NanochatDatasetBuilder/1.0 (Python Documentation Scraper)"
+    # Concurrent requests per domain
+    concurrent_requests: 3
+    # Follow redirects
+    follow_redirects: true
+    # Maximum depth for crawling (from docs root)
+    max_depth: 5
+
+  # Content filtering
+  content:
+    # Minimum content length (characters) to include
+    min_content_length: 100
+    # Maximum content length (characters) per page
+    max_content_length: 50000
+    # Exclude pages matching these patterns
+    exclude_patterns:
+      - "*/genindex*"
+      - "*/search*"
+      - "*/changelog*"
+      - "*/release-notes*"
+      - "*/_modules/*"
+      - "*/_sources/*"
+    # Include only pages matching these patterns (empty = all)
+    include_patterns: []
+
+# GitHub PR Dataset Settings
+github_prs:
+  enabled: true
+  output_subdir: "github_prs"
+
+  # GitHub API token (can also be set via GITHUB_TOKEN env var)
+  # token: "ghp_xxxxxxxxxxxx"
+
+  # Repositories to process
+  repositories:
+    - owner: python
+      repo: cpython
+      # Number of merged PRs to fetch (0 = all available)
+      max_prs: 100
+      # Only PRs merged after this date (ISO format)
+      since: "2023-01-01"
+      # Filter PRs by labels (empty = all)
+      labels: []
+      # Filter by file patterns (empty = all Python files)
+      file_patterns:
+        - "*.py"
+        - "Lib/**/*.py"
+
+    - owner: pallets
+      repo: flask
+      max_prs: 50
+      since: "2023-01-01"
+      file_patterns:
+        - "*.py"
+        - "src/**/*.py"
+
+    - owner: psf
+      repo: requests
+      max_prs: 50
+      since: "2023-01-01"
+      file_patterns:
+        - "*.py"
+        - "src/**/*.py"
+
+    - owner: tiangolo
+      repo: fastapi
+      max_prs: 50
+      since: "2023-01-01"
+      file_patterns:
+        - "*.py"
+        - "fastapi/**/*.py"
+
+    - owner: pydantic
+      repo: pydantic
+      max_prs: 50
+      since: "2023-01-01"
+      file_patterns:
+        - "*.py"
+        - "pydantic/**/*.py"
+
+  # PR filtering
+  filters:
+    # Minimum number of changed files
+    min_changed_files: 1
+    # Maximum number of changed files (very large PRs are often noisy)
+    max_changed_files: 20
+    # Minimum additions
+    min_additions: 5
+    # Maximum additions (avoid huge PRs)
+    max_additions: 2000
+    # Exclude PRs with these labels
+    exclude_labels:
+      - "dependencies"
+      - "dependabot"
+      - "renovate"
+      - "automated"
+    # Exclude PRs from these authors (bots)
+    exclude_authors:
+      - "dependabot[bot]"
+      - "dependabot-preview[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+
+  # GitHub API settings
+  api:
+    # Requests per hour (GitHub's limit is 5000 for authenticated)
+    rate_limit: 4000
+    # Delay between API calls (seconds)
+    request_delay: 0.25
+    # Timeout per request
+    request_timeout: 30
+    # Max retries
+    max_retries: 3
+
+# Dataset generation settings
+dataset:
+  # Seed for reproducible shuffling
+  random_seed: 42
+
+  # Train/test split ratio
+  train_ratio: 0.9
+
+  # Conversation generation templates
+  templates:
+    # Templates for documentation-based conversations
+    docs:
+      - "Explain how to use {topic} in Python."
+      - "What is {topic} and how does it work?"
+      - "Show me an example of using {topic}."
+      - "What are the parameters for {function}?"
+      - "How do I {action} with {library}?"
+
+    # Templates for PR-based conversations
+    prs:
+      - "What changes were made in this PR?"
+      - "Explain the purpose of these code changes."
+      - "Review the following code diff and summarize the changes."
+      - "What problem does this PR solve?"
+
+  # Max tokens per conversation (approximate, for filtering)
+  max_tokens_per_conversation: 4096
+
+  # Deduplication
+  deduplicate: true
+  # Similarity threshold for deduplication (0-1)
+  dedup_threshold: 0.95
+
+# Logging settings
+logging:
+  level: INFO
+  # Log file path (empty = stdout only)
+  file: ""
+  # Include timestamps
+  timestamps: true
+
+# Processing settings
+processing:
+  # Number of worker processes
+  num_workers: 4
+  # Batch size for processing
+  batch_size: 100
+  # Show progress bars
+  show_progress: true
