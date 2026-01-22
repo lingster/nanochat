@@ -1,0 +1,56 @@
+# Example configuration for generating Parquet pretraining data
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "./output"
+  cache_dir: "./.cache"
+  log_level: "INFO"
+  num_workers: 4
+
+# Jobs
+jobs:
+  # Generate Parquet files from web scraping
+  - name: "web_pretraining"
+    type: "parquet"
+    output_file: "web_data_shard_{index:05d}.parquet"
+
+    sources:
+      # Scrape Wikipedia articles
+      - type: "web"
+        urls:
+          - "https://en.wikipedia.org/wiki/Machine_learning"
+          - "https://en.wikipedia.org/wiki/Deep_learning"
+          - "https://en.wikipedia.org/wiki/Natural_language_processing"
+        options:
+          follow_links: true
+          max_depth: 1
+          url_pattern: "^https://en.wikipedia.org/wiki/"
+          same_domain_only: true
+          max_pages: 50
+          rate_limit: 1.0
+
+      # Include local text files
+      - type: "files"
+        paths:
+          - "./data/**/*.txt"
+          - "./data/**/*.md"
+        options:
+          recursive: true
+          encoding: "utf-8"
+
+    # Output options
+    options:
+      shard_size_mb: 100
+      compression: "zstd"
+      row_group_size: 1024
+      min_text_length: 200
+      max_text_length: 1000000
+      deduplication: true
+
+# Quality filters
+quality:
+  min_text_length: 100
+  max_text_length: 1000000
+  content_filters:
+    - "normalize_whitespace"
