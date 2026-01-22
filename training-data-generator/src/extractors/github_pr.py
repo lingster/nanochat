@@ -12,7 +12,7 @@ from ..config.schema import GitHubPRSourceOptions
 class GitHubPRInspector(BaseExtractor):
     """Extractor for GitHub Pull Requests."""
 
-    def __init__(self, repositories: list, github_token: str, options: GitHubPRSourceOptions, logger=None):
+    def __init__(self, repositories: list, github_token: str, options: GitHubPRSourceOptions, logger=None, state=None):
         """Initialize GitHub PR inspector.
 
         Args:
@@ -20,10 +20,12 @@ class GitHubPRInspector(BaseExtractor):
             github_token: GitHub API token
             options: GitHub PR options
             logger: Optional logger
+            state: Optional JobState for resume functionality
         """
         super().__init__(logger)
         self.repositories = repositories
         self.options = options
+        self.state = state
         self.github = Github(github_token)
 
     def extract(self) -> Iterator[ExtractedContent]:
@@ -51,6 +53,14 @@ class GitHubPRInspector(BaseExtractor):
                         self.log('info', f"Reached max PRs for {repo_name}: {self.options.max_prs_per_repo}")
                         break
 
+                    # Check if already processed
+                    pr_id = f"{repo_name}#{pr.number}"
+                    if self.state and self.state.is_processed('github_prs', pr_id):
+                        self.log('debug', f"PR already processed, skipping: {pr_id}")
+                        if self.state:
+                            self.state.increment_skipped()
+                        continue
+
                     # Apply filters
                     if not self._should_process_pr(pr):
                         continue
@@ -58,6 +68,10 @@ class GitHubPRInspector(BaseExtractor):
                     # Extract PR data
                     content = self._extract_pr_content(pr, repo_name)
                     if content:
+                        # Mark as processed in state
+                        if self.state:
+                            self.state.mark_processed('github_prs', pr_id)
+
                         yield content
                         pr_count += 1
 

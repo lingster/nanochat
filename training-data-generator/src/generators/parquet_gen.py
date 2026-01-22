@@ -12,22 +12,31 @@ from ..config.schema import ParquetOutputOptions
 class ParquetGenerator(BaseGenerator):
     """Generator for Parquet files."""
 
-    def __init__(self, output_path: str, options: ParquetOutputOptions = None, logger=None):
+    def __init__(self, output_path: str, options: ParquetOutputOptions = None, logger=None, state=None):
         """Initialize Parquet generator.
 
         Args:
             output_path: Path template for output files (can include {index})
             options: Parquet generation options
             logger: Optional logger
+            state: Optional JobState for resume functionality
         """
         super().__init__(output_path, options, logger)
         self.options = options or ParquetOutputOptions()
+        self.state = state
 
         # Buffer for accumulating data
         self.buffer = []
         self.current_size_mb = 0
-        self.shard_index = 0
-        self.output_files = []
+
+        # Restore shard index from state if resuming
+        self.shard_index = state.get_generator_state('shard_index', 0) if state else 0
+
+        # Track output files from previous runs
+        self.output_files = state.get_generator_state('output_files', []) if state else []
+
+        if self.shard_index > 0:
+            self.log('info', f"Resuming from shard {self.shard_index}")
 
     def add(self, item: dict):
         """Add a text item to be written.
@@ -108,6 +117,12 @@ class ParquetGenerator(BaseGenerator):
 
         self.output_files.append(str(output_file))
         self.shard_index += 1
+
+        # Save generator state
+        if self.state:
+            self.state.set_generator_state('shard_index', self.shard_index)
+            self.state.set_generator_state('output_files', self.output_files)
+            self.state.save()
 
         # Clear buffer
         self.buffer = []

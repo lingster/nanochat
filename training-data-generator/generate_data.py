@@ -36,6 +36,16 @@ def main():
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
         help="Logging level (default: INFO)"
     )
+    parser.add_argument(
+        "--no-resume",
+        action="store_true",
+        help="Start fresh, ignoring previous state (default: resume from last run)"
+    )
+    parser.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Clear all cached state before starting"
+    )
 
     args = parser.parse_args()
 
@@ -65,8 +75,24 @@ def main():
         if config.global_config.log_level:
             logger.setLevel(config.global_config.log_level)
 
+        # Handle clear cache flag
+        if args.clear_cache:
+            logger.info("Clearing cached state...")
+            from utils.state import StateManager
+            cache_dir = Path(config.global_config.cache_dir)
+            state_manager = StateManager(str(cache_dir))
+            state_manager.clear_all()
+            logger.info("Cache cleared")
+
+        # Determine resume mode
+        resume = not args.no_resume
+        if resume:
+            logger.info("Resume mode: ON (will skip already processed items)")
+        else:
+            logger.info("Resume mode: OFF (starting fresh)")
+
         # Create orchestrator and run jobs
-        orchestrator = JobOrchestrator(config, logger)
+        orchestrator = JobOrchestrator(config, logger, resume=resume)
         orchestrator.run_all_jobs()
 
         logger.info("\n" + "="*60)

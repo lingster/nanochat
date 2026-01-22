@@ -14,19 +14,21 @@ from ..utils.retry import retry_with_backoff, RateLimiter
 class WebScraper(BaseExtractor):
     """Extractor for web content."""
 
-    def __init__(self, urls: list, options: WebSourceOptions, logger=None):
+    def __init__(self, urls: list, options: WebSourceOptions, logger=None, state=None):
         """Initialize web scraper.
 
         Args:
             urls: List of URLs to scrape
             options: Web scraping options
             logger: Optional logger
+            state: Optional JobState for resume functionality
         """
         super().__init__(logger)
         self.urls = urls
         self.options = options
         self.rate_limiter = RateLimiter(options.rate_limit)
         self.visited: Set[str] = set()
+        self.state = state
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'TrainingDataGenerator/1.0 (Educational Purpose)'
@@ -66,6 +68,14 @@ class WebScraper(BaseExtractor):
         if url in self.visited:
             return
 
+        # Check if already processed (from previous run)
+        if self.state and self.state.is_processed('urls', url):
+            self.log('debug', f"URL already processed, skipping: {url}")
+            self.visited.add(url)  # Mark as visited to avoid reprocessing
+            if self.state:
+                self.state.increment_skipped()
+            return
+
         # Check depth limit
         if depth > self.options.max_depth:
             return
@@ -100,6 +110,10 @@ class WebScraper(BaseExtractor):
         try:
             content = self._fetch_page(url)
             if content:
+                # Mark as processed in state
+                if self.state:
+                    self.state.mark_processed('urls', url)
+
                 yield content
 
                 # Follow links if enabled

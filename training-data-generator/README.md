@@ -50,6 +50,69 @@ export GITHUB_TOKEN="your_github_token_here"
 python generate_data.py --config examples/config_github_code.yaml
 ```
 
+## Resume/Cache Functionality
+
+The tool automatically tracks processed items and can resume from where it left off if interrupted or rerun.
+
+### How It Works
+
+- **Automatic Checkpointing**: Tracks all processed URLs, files, and GitHub PRs
+- **Shard Resumption**: For Parquet output, resumes from the last shard index
+- **State Persistence**: State is saved every 10 items and at job completion
+- **Cache Location**: `.cache/` directory (configurable)
+
+### Usage
+
+**Default behavior (resume enabled)**:
+```bash
+python generate_data.py --config config.yaml
+```
+
+**Start fresh (ignore previous state)**:
+```bash
+python generate_data.py --config config.yaml --no-resume
+```
+
+**Clear all cached state**:
+```bash
+python generate_data.py --config config.yaml --clear-cache
+```
+
+### Benefits
+
+1. **Interruption Recovery**: If the job fails or is interrupted, rerun the same command to continue
+2. **Incremental Updates**: Add new sources without reprocessing old ones
+3. **Cost Savings**: Avoid redundant API calls to GitHub
+4. **Time Savings**: Skip already-scraped URLs and processed files
+
+### Example
+
+```bash
+# First run - processes 1000 items
+python generate_data.py --config config.yaml
+
+# Interrupted after 500 items (Ctrl+C)
+^C
+
+# Resume - processes remaining 500 items
+python generate_data.py --config config.yaml
+
+# Output shows:
+# "Resuming job - previously processed: 500 items"
+# "Items skipped (already processed): 500"
+```
+
+### State File Location
+
+State files are stored in:
+```
+.cache/
+├── <job_name_hash>_state.json
+└── ...
+```
+
+Each job has its own state file, identified by a hash of the job name.
+
 ## Configuration
 
 Configuration is done via YAML files. See the `examples/` directory for complete examples.

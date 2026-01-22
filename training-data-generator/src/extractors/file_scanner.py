@@ -23,17 +23,19 @@ class FileScanner(BaseExtractor):
         '.sql', '.r', '.m', '.swift', '.kt', '.scala',
     }
 
-    def __init__(self, paths: list, options: FileSourceOptions, logger=None):
+    def __init__(self, paths: list, options: FileSourceOptions, logger=None, state=None):
         """Initialize file scanner.
 
         Args:
             paths: List of file paths or glob patterns
             options: File scanning options
             logger: Optional logger
+            state: Optional JobState for resume functionality
         """
         super().__init__(logger)
         self.paths = paths
         self.options = options
+        self.state = state
 
     def extract(self) -> Iterator[ExtractedContent]:
         """Extract content from files.
@@ -98,6 +100,14 @@ class FileScanner(BaseExtractor):
         Returns:
             ExtractedContent object or None if failed
         """
+        # Check if already processed
+        file_id = str(file_path.absolute())
+        if self.state and self.state.is_processed('files', file_id):
+            self.log('debug', f"File already processed, skipping: {file_path}")
+            if self.state:
+                self.state.increment_skipped()
+            return None
+
         # Check if text file
         if not self._is_text_file(file_path):
             self.log('debug', f"Skipping non-text file: {file_path}")
@@ -124,6 +134,10 @@ class FileScanner(BaseExtractor):
                 'file_extension': file_path.suffix,
                 'file_size': file_path.stat().st_size,
             }
+
+            # Mark as processed in state
+            if self.state:
+                self.state.mark_processed('files', file_id)
 
             return ExtractedContent(
                 text=text,

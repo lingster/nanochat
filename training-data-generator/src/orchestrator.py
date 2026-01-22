@@ -20,24 +20,31 @@ from .generators.parquet_gen import ParquetGenerator
 from .generators.jsonl_conv_gen import JSONLConversationGenerator
 from .generators.jsonl_code_gen import JSONLCodeGenerator
 from .utils.progress import ProgressTracker
+from .utils.state import StateManager
 
 
 class JobOrchestrator:
     """Orchestrates data extraction and generation jobs."""
 
-    def __init__(self, config: Config, logger=None):
+    def __init__(self, config: Config, logger=None, resume: bool = True):
         """Initialize orchestrator.
 
         Args:
             config: Configuration object
             logger: Optional logger
+            resume: Whether to resume from previous state (default: True)
         """
         self.config = config
         self.logger = logger
+        self.resume = resume
 
         # Create output directory
         output_dir = Path(config.global_config.output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Initialize state manager
+        cache_dir = Path(config.global_config.cache_dir)
+        self.state_manager = StateManager(str(cache_dir))
 
     def run_all_jobs(self):
         """Run all configured jobs."""
@@ -60,12 +67,23 @@ class JobOrchestrator:
         Args:
             job: Job configuration
         """
+        # Get job state
+        job_state = self.state_manager.get_job_state(job.name, resume=self.resume)
+
+        # Log resume info
+        if self.resume and job_state.get_statistics()['total_items_processed'] > 0:
+            stats = job_state.get_statistics()
+            self.log('info', f"Resuming job - previously processed: {stats['total_items_processed']} items")
+            self.log('info', f"  - URLs: {stats['processed_urls']}")
+            self.log('info', f"  - Files: {stats['processed_files']}")
+            self.log('info', f"  - PRs: {stats['processed_prs']}")
+
         # Get output options
         output_options = get_output_options(job)
 
         # Create generator
         output_path = Path(self.config.global_config.output_dir) / job.output_file
-        generator = self._create_generator(job.type, str(output_path), output_options)
+        generator = self._create_generator(job.type, str(output_path), output_options, job_state)
 
         # Create processors
         cleaner = TextCleaner()
@@ -75,12 +93,13 @@ class JobOrchestrator:
         # Process each source
         total_items = 0
         duplicates = 0
+        items_since_save = 0
 
         for source in job.sources:
             self.log('info', f"Processing source: {source.type}")
 
             # Create extractor
-            extractor = self._create_extractor(source)
+            extractor = self._create_extractor(source, job_state)
 
             # Extract and process content
             for extracted in extractor.extract():
@@ -100,6 +119,7 @@ class JobOrchestrator:
                 # Check for duplicates
                 if deduplicator and deduplicator.is_duplicate(clean_text):
                     duplicates += 1
+                    job_state.increment_duplicates()
                     continue
 
                 # Format based on job type
@@ -113,23 +133,38 @@ class JobOrchestrator:
                 if formatted:
                     generator.add(formatted)
                     total_items += 1
+                    items_since_save += 1
+
+                    # Periodically save state (every 10 items)
+                    if items_since_save >= 10:
+                        job_state.save()
+                        items_since_save = 0
+
+        # Final save
+        job_state.save()
 
         # Finalize output
         output_files = generator.finalize()
 
+        # Get final statistics
+        stats = job_state.get_statistics()
+
         self.log('info', f"\nJob {job.name} completed:")
-        self.log('info', f"  - Total items: {total_items}")
+        self.log('info', f"  - Items processed this run: {total_items}")
+        self.log('info', f"  - Total items processed: {stats['total_items_processed']}")
+        self.log('info', f"  - Items skipped (already processed): {stats['total_items_skipped']}")
         if deduplicator:
-            self.log('info', f"  - Duplicates skipped: {duplicates}")
+            self.log('info', f"  - Duplicates detected: {stats['total_duplicates']}")
         self.log('info', f"  - Output files: {len(output_files)}")
         for f in output_files:
             self.log('info', f"    - {f}")
 
-    def _create_extractor(self, source: SourceConfig):
+    def _create_extractor(self, source: SourceConfig, state=None):
         """Create extractor for a source.
 
         Args:
             source: Source configuration
+            state: Optional JobState for resume functionality
 
         Returns:
             Extractor instance
@@ -137,33 +172,34 @@ class JobOrchestrator:
         options = get_source_options(source)
 
         if source.type == "web":
-            return WebScraper(source.urls, options, self.logger)
+            return WebScraper(source.urls, options, self.logger, state)
 
         elif source.type == "files":
-            return FileScanner(source.paths, options, self.logger)
+            return FileScanner(source.paths, options, self.logger, state)
 
         elif source.type == "github_pr":
             github_token = self.config.auth.github_token if self.config.auth else None
             if not github_token:
                 raise ValueError("GitHub token required for github_pr source")
-            return GitHubPRInspector(source.repositories, github_token, options, self.logger)
+            return GitHubPRInspector(source.repositories, github_token, options, self.logger, state)
 
         else:
             raise ValueError(f"Unsupported source type: {source.type}")
 
-    def _create_generator(self, job_type: str, output_path: str, options):
+    def _create_generator(self, job_type: str, output_path: str, options, state=None):
         """Create generator for a job type.
 
         Args:
             job_type: Type of job
             output_path: Output file path
             options: Generator options
+            state: Optional JobState for resume functionality
 
         Returns:
             Generator instance
         """
         if job_type == "parquet":
-            return ParquetGenerator(output_path, options, self.logger)
+            return ParquetGenerator(output_path, options, self.logger, state)
 
         elif job_type == "jsonl_conversation":
             return JSONLConversationGenerator(output_path, options, self.logger)
