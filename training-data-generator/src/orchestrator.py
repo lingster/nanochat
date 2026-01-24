@@ -130,15 +130,20 @@ class JobOrchestrator:
                     source
                 )
 
+                # Handle both single items and lists of items
                 if formatted:
-                    generator.add(formatted)
-                    total_items += 1
-                    items_since_save += 1
+                    items_to_add = formatted if isinstance(formatted, list) else [formatted]
 
-                    # Periodically save state (every 10 items)
-                    if items_since_save >= 10:
-                        job_state.save()
-                        items_since_save = 0
+                    for item in items_to_add:
+                        if item:
+                            generator.add(item)
+                            total_items += 1
+                            items_since_save += 1
+
+                            # Periodically save state (every 10 items)
+                            if items_since_save >= 10:
+                                job_state.save()
+                                items_since_save = 0
 
         # Final save
         job_state.save()
@@ -244,7 +249,8 @@ class JobOrchestrator:
                             qa['answer']
                         )
                     )
-                return conversations[0] if conversations else None
+                # Return all conversations as a list
+                return conversations if conversations else None
 
             else:
                 # Default: create simple Q&A from title and content

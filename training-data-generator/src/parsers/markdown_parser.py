@@ -41,28 +41,29 @@ class MarkdownQAParser(BaseParser):
         """
         qa_pairs = []
 
-        # Split by headers
-        sections = re.split(r'\n(#{1,3})\s+(.+)\n', content)
+        # Split by headers (##+ level headers, not top-level #)
+        sections = re.split(r'\n(#{2,3})\s+(.+?)(?:\n|$)', content)
 
-        i = 0
-        while i < len(sections) - 2:
-            if sections[i].strip():
-                i += 1
-                continue
+        # After split:
+        # sections[0] = content before first header
+        # sections[1] = header marker (## or ###)
+        # sections[2] = header text (question)
+        # sections[3] = content after header (answer + content before next header)
+        # sections[4] = next header marker
+        # etc.
 
-            # sections[i+1] is the header marker (# or ## or ###)
-            # sections[i+2] is the header text (question)
-            # sections[i+3] is the content (answer)
-            if i + 3 < len(sections):
-                question = sections[i + 2].strip()
-                answer = sections[i + 3].strip()
+        i = 1  # Start at first header marker
+        while i + 2 < len(sections):
+            header_marker = sections[i]
+            question = sections[i + 1].strip()
+            answer_section = sections[i + 2].strip() if i + 2 < len(sections) else ""
 
-                if question and answer:
-                    qa_pairs.append({
-                        'question': question,
-                        'answer': answer
-                    })
+            if question and answer_section:
+                qa_pairs.append({
+                    'question': question,
+                    'answer': answer_section
+                })
 
-            i += 3
+            i += 3  # Move to next header marker
 
         return qa_pairs

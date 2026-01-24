@@ -109,7 +109,7 @@ class ConfigValidator:
         """Check if string is a valid URL."""
         url_pattern = re.compile(
             r'^https?://'  # http:// or https://
-            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,63}\.?|'  # domain
             r'localhost|'  # localhost
             r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # or IP
             r'(?::\d+)?'  # optional port

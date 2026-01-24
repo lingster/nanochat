@@ -46,13 +46,26 @@ class FileScanner(BaseExtractor):
         for path_pattern in self.paths:
             # Handle glob patterns
             if '*' in path_pattern:
-                base_path = Path(path_pattern.split('*')[0])
+                # Find the directory part before the first glob character
+                first_glob_pos = path_pattern.index('*')
+                # Find the last path separator before the glob
+                base_path_str = path_pattern[:first_glob_pos]
+                last_sep = max(base_path_str.rfind('/'), base_path_str.rfind(os.sep))
+
+                if last_sep >= 0:
+                    base_path_str = base_path_str[:last_sep + 1]
+                    pattern = path_pattern[len(base_path_str):]
+                else:
+                    # No separator found, use current directory
+                    base_path_str = '.'
+                    pattern = path_pattern
+
+                base_path = Path(base_path_str)
                 if not base_path.exists():
                     self.log('warning', f"Base path doesn't exist: {base_path}")
                     continue
 
-                pattern = path_pattern[len(str(base_path)):]
-                for file_path in base_path.glob(pattern.lstrip('/')):
+                for file_path in base_path.glob(pattern.lstrip('./')):
                     if file_path.is_file():
                         content = self._read_file(file_path)
                         if content:

@@ -57,6 +57,11 @@ name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
+[tool.uv.workspace]
+members = [
+    "training-data-generator",
+]
+
 [project.optional-dependencies]
 cpu = [
     "torch>=2.9.1",

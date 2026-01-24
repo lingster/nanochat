@@ -1,7 +1,7 @@
 """GitHub Pull Request inspector extractor."""
 
 from typing import Iterator, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from github import Github, GithubException
 import time
 
@@ -95,19 +95,21 @@ class GitHubPRInspector(BaseExtractor):
         Returns:
             True if PR should be processed
         """
+        pr_created_at = self._normalize_datetime(pr.created_at)
+
         # Check if merged (if required)
         if self.options.merged_only and not pr.merged:
             return False
 
         # Check date range
         if self.options.date_from:
-            date_from = datetime.fromisoformat(self.options.date_from.replace('Z', '+00:00'))
-            if pr.created_at < date_from:
+            date_from = self._parse_datetime(self.options.date_from)
+            if pr_created_at < date_from:
                 return False
 
         if self.options.date_to:
-            date_to = datetime.fromisoformat(self.options.date_to.replace('Z', '+00:00'))
-            if pr.created_at > date_to:
+            date_to = self._parse_datetime(self.options.date_to)
+            if pr_created_at > date_to:
                 return False
 
         # Check labels
@@ -132,6 +134,17 @@ class GitHubPRInspector(BaseExtractor):
                 return False
 
         return True
+
+    @staticmethod
+    def _parse_datetime(value: str) -> datetime:
+        parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        return GitHubPRInspector._normalize_datetime(parsed)
+
+    @staticmethod
+    def _normalize_datetime(value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
 
     def _extract_pr_content(self, pr, repo_name: str) -> Optional[ExtractedContent]:
         """Extract content from a PR.

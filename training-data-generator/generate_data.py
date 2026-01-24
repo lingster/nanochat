@@ -9,13 +9,13 @@ import argparse
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+# Add parent directory to path so we can import src package
+sys.path.insert(0, str(Path(__file__).parent))
 
-from config.loader import load_config
-from config.validator import ConfigValidator
-from orchestrator import JobOrchestrator
-from utils.logger import setup_logger
+from src.config.loader import load_config
+from src.config.validator import ConfigValidator
+from src.orchestrator import JobOrchestrator
+from src.utils.logger import setup_logger
 
 
 def main():
@@ -78,7 +78,7 @@ def main():
         # Handle clear cache flag
         if args.clear_cache:
             logger.info("Clearing cached state...")
-            from utils.state import StateManager
+            from src.utils.state import StateManager
             cache_dir = Path(config.global_config.cache_dir)
             state_manager = StateManager(str(cache_dir))
             state_manager.clear_all()

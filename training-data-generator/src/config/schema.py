@@ -52,9 +52,11 @@ class GitHubPRSourceOptions:
     max_commits: int = 20
     min_changes: int = 10
     max_changes: int = 500
+    max_diff_lines: int = 500
     languages: Optional[List[str]] = None
     exclude_authors: Optional[List[str]] = None
     include_diff: bool = True
+    max_prs_per_repo: Optional[int] = None
 
 
 @dataclass
