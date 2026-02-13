@@ -1,0 +1,23 @@
+{
+  "job_name": "smoke_test",
+  "started_at": "2026-01-24T08:49:10.533882",
+  "last_updated": "2026-01-24T10:47:16.100340",
+  "processed_items": {
+    "urls": [],
+    "files": [
+      "/home/ling/workarea/nanochat/training-data-generator/data/test.txt"
+    ],
+    "github_prs": []
+  },
+  "generator_state": {
+    "shard_index": 1,
+    "output_files": [
+      "output/test_shard_00000.parquet"
+    ]
+  },
+  "statistics": {
+    "total_items_processed": 1,
+    "total_items_skipped": 1,
+    "total_duplicates": 0
+  }
+}

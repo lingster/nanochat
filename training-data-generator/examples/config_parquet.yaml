@@ -3,8 +3,8 @@ version: "1.0"
 
 # Global settings
 global:
-  output_dir: "./output"
-  cache_dir: "./.cache"
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
   log_level: "INFO"
   num_workers: 4
 

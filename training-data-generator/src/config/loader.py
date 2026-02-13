@@ -47,11 +47,12 @@ def expand_env_vars_in_dict(data: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
-def load_config(config_path: str) -> Config:
+def load_config(config_path: str, output_dir_override: str = None) -> Config:
     """Load and parse configuration from YAML file.
 
     Args:
         config_path: Path to YAML configuration file
+        output_dir_override: Optional CLI override for output_dir
 
     Returns:
         Parsed Config object
@@ -73,9 +74,30 @@ def load_config(config_path: str) -> Config:
 
     # Parse configuration
     try:
-        # Global config
+        # Global config with output_dir priority:
+        # 1. CLI argument (output_dir_override)
+        # 2. Config file value
+        # 3. Environment variable (NANOCHAT_DATA_DIR)
+        # 4. Default ("./output")
         global_data = raw_config.get('global', {})
+
+        # Determine output_dir based on priority
+        if output_dir_override:
+            global_data['output_dir'] = output_dir_override
+        elif 'output_dir' not in global_data or not global_data['output_dir']:
+            # Check environment variable
+            env_data_dir = os.environ.get('NANOCHAT_DATA_DIR')
+            if env_data_dir:
+                global_data['output_dir'] = env_data_dir
+
         global_config = GlobalConfig(**global_data)
+
+        # Create output directory if it doesn't exist
+        try:
+            output_path = Path(global_config.output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+        except (OSError, PermissionError) as e:
+            raise ValueError(f"Failed to create output directory '{global_config.output_dir}': {e}")
 
         # Auth config
         auth_data = raw_config.get('auth', {})

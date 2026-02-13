@@ -5,8 +5,8 @@ version: "1.0"
 
 # Global settings
 global:
-  output_dir: "./output/python_data"
-  cache_dir: "./.cache/python"
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
   log_level: "INFO"
   num_workers: 4
 

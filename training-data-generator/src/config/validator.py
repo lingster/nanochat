@@ -119,5 +119,5 @@ class ConfigValidator:
     @staticmethod
     def _is_valid_github_repo(repo: str) -> bool:
         """Check if string is a valid GitHub repository (owner/repo format)."""
-        repo_pattern = re.compile(r'^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$')
+        repo_pattern = re.compile(r'^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$')
         return bool(repo_pattern.match(repo))

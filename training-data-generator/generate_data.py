@@ -46,6 +46,11 @@ def main():
         action="store_true",
         help="Clear all cached state before starting"
     )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        help="Override output directory (default: from config or NANOCHAT_DATA_DIR env var)"
+    )
 
     args = parser.parse_args()
 
@@ -58,7 +63,7 @@ def main():
     try:
         # Load configuration
         logger.info(f"Loading configuration from {args.config}")
-        config = load_config(args.config)
+        config = load_config(args.config, output_dir_override=args.output_dir)
 
         # Validate configuration
         logger.info("Validating configuration...")

@@ -1,0 +1,832 @@
+# Python Code Examples from GitHub PRs - EXPANDED Configuration
+# This is an EXPANDED version designed for collecting LARGE datasets (15-25GB+)
+# Compared to python_code.yaml, this configuration:
+# - Increases max_prs_per_repo from 100-150 to 3000-5000 per repo
+# - Extends date range back to 2020-01-01 (vs 2024-01-01)
+# - Adds 50+ more popular Python repositories across diverse categories
+# - Maintains the same quality filters (merged PRs, commit/change limits, bot exclusion)
+#
+# Expected output: 15-25GB of high-quality Python code examples from real-world PRs
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
+  log_level: "INFO"
+
+# Authentication
+auth:
+  github_token: "${GITHUB_TOKEN}"  # Set GITHUB_TOKEN environment variable
+
+# Jobs
+jobs:
+  # Extract code examples from popular Python repositories
+  - name: "python_github_code_examples_expanded"
+    type: "jsonl_code"
+    output_file: "python_code_examples_expanded.jsonl"
+
+    sources:
+      # Core Python & Standard Library
+      - type: "github_pr"
+        repositories:
+          - "python/cpython"
+          - "python/mypy"
+          - "python/typeshed"
+          - "python/typing"
+          - "python/peps"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          date_to: "2026-01-24"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py", "python"]
+          exclude_authors: ["dependabot", "dependabot[bot]", "github-actions[bot]"]
+          include_diff: true
+          max_prs_per_repo: 5000
+
+      # Web Frameworks
+      - type: "github_pr"
+        repositories:
+          - "pallets/flask"
+          - "django/django"
+          - "fastapi/fastapi"
+          - "encode/starlette"
+          - "tornadoweb/tornado"
+          - "bottlepy/bottle"
+          - "cherrypy/cherrypy"
+          - "tiangolo/fastapi"
+          - "sanic-org/sanic"
+          - "pgjones/quart"
+          - "emmett-framework/emmett"
+          - "web2py/web2py"
+          - "pylons/pyramid"
+          - "falconry/falcon"
+          - "hugapi/hug"
+          - "vibora-io/vibora"
+          - "aio-libs/aiohttp-mako"
+          - "pycnic/pycnic"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]", "github-actions[bot]"]
+          max_prs_per_repo: 4000
+
+      # HTTP & Networking
+      - type: "github_pr"
+        repositories:
+          - "psf/requests"
+          - "encode/httpx"
+          - "aio-libs/aiohttp"
+          - "python-trio/trio"
+          - "urllib3/urllib3"
+          - "mitmproxy/mitmproxy"
+          - "twisted/twisted"
+          - "eventlet/eventlet"
+          - "gevent/gevent"
+          - "MagicStack/uvloop"
+          - "nameko/nameko"
+          - "zeromq/pyzmq"
+          - "celery/kombu"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3500
+
+      # Data Science & ML Core
+      - type: "github_pr"
+        repositories:
+          - "numpy/numpy"
+          - "pandas-dev/pandas"
+          - "scikit-learn/scikit-learn"
+          - "scipy/scipy"
+          - "matplotlib/matplotlib"
+          - "mwaskom/seaborn"
+          - "plotly/plotly.py"
+          - "bokeh/bokeh"
+          - "altair-viz/altair"
+          - "pydata/xarray"
+          - "statsmodels/statsmodels"
+          - "rapidsai/cudf"
+          - "pydata/numexpr"
+          - "blaze/blaze"
+          - "vaexio/vaex"
+          - "modin-project/modin"
+          - "dask/dask"
+          - "ray-project/ray"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 5000
+
+      # Machine Learning - Boosting & Traditional ML
+      - type: "github_pr"
+        repositories:
+          - "dmlc/xgboost"
+          - "microsoft/LightGBM"
+          - "catboost/catboost"
+          - "intel/scikit-learn-intelex"
+          - "automl/auto-sklearn"
+          - "epistasislab/tpot"
+          - "mljar/mljar-supervised"
+          - "hyperopt/hyperopt"
+          - "optuna/optuna"
+          - "fmfn/BayesianOptimization"
+          - "scikit-optimize/scikit-optimize"
+          - "autonomio/talos"
+          - "mlflow/mlflow"
+          - "allegroai/clearml"
+          - "wandb/wandb"
+          - "lanpa/tensorboardX"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Deep Learning Frameworks
+      - type: "github_pr"
+        repositories:
+          - "pytorch/pytorch"
+          - "tensorflow/tensorflow"
+          - "keras-team/keras"
+          - "microsoft/DeepSpeed"
+          - "huggingface/transformers"
+          - "Lightning-AI/pytorch-lightning"
+          - "google/jax"
+          - "apache/mxnet"
+          - "PaddlePaddle/Paddle"
+          - "chainer/chainer"
+          - "horovod/horovod"
+          - "pytorch/ignite"
+          - "skorch-dev/skorch"
+          - "Theano/Theano"
+          - "sony/nnabla"
+          - "onnx/onnx"
+          - "facebookresearch/detectron2"
+          - "open-mmlab/mmdetection"
+          - "ultralytics/yolov5"
+          - "rwightman/pytorch-image-models"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]", "github-actions[bot]"]
+          max_prs_per_repo: 4000
+
+      # Testing & Quality
+      - type: "github_pr"
+        repositories:
+          - "pytest-dev/pytest"
+          - "HypothesisWorks/hypothesis"
+          - "nedbat/coveragepy"
+          - "PyCQA/pylint"
+          - "PyCQA/flake8"
+          - "python/mypy"
+          - "psf/black"
+          - "PyCQA/isort"
+          - "pre-commit/pre-commit"
+          - "pytest-dev/pytest-cov"
+          - "pytest-dev/pytest-asyncio"
+          - "pytest-dev/pytest-xdist"
+          - "pytest-dev/pytest-mock"
+          - "spulec/freezegun"
+          - "gabrielfalcao/HTTPretty"
+          - "getsentry/responses"
+          - "nose-devs/nose2"
+          - "robotframework/robotframework"
+          - "behave/behave"
+          - "tox-dev/tox"
+          - "pypa/hatch"
+          - "PyCQA/bandit"
+          - "PyCQA/pydocstyle"
+          - "terrencepreilly/darglint"
+          - "PyCQA/pycodestyle"
+          - "PyCQA/mccabe"
+          - "pycqa/pyflakes"
+          - "instagram/MonkeyType"
+          - "google/pytype"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Database & ORM
+      - type: "github_pr"
+        repositories:
+          - "sqlalchemy/sqlalchemy"
+          - "coleifer/peewee"
+          - "ponyorm/pony"
+          - "psycopg/psycopg"
+          - "mongodb/mongo-python-driver"
+          - "redis/redis-py"
+          - "elastic/elasticsearch-py"
+          - "tortoise/tortoise-orm"
+          - "encode/databases"
+          - "mcfunley/pugsql"
+          - "sdispater/orator"
+          - "RobertCraigie/prisma-client-py"
+          - "neo4j/neo4j-python-driver"
+          - "datastax/python-driver"
+          - "influxdata/influxdb-python"
+          - "pudo/dataset"
+          - "dbcli/pgcli"
+          - "dbcli/mycli"
+          - "alembic/alembic"
+          - "miguelgrinberg/Flask-Migrate"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Scraping & Parsing
+      - type: "github_pr"
+        repositories:
+          - "scrapy/scrapy"
+          - "SeleniumHQ/selenium"
+          - "psf/requests-html"
+          - "facelessuser/soupsieve"
+          - "playwright-community/playwright-python"
+          - "kennethreitz/requests-html"
+          - "MechanicalSoup/MechanicalSoup"
+          - "codelucas/newspaper"
+          - "buriy/python-readability"
+          - "scrapinghub/scrapy-splash"
+          - "python-lxml/lxml"
+          - "html5lib/html5lib-python"
+          - "grangier/python-goose"
+          - "scrapinghub/parsel"
+          - "clips/pattern"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # CLI & Terminal
+      - type: "github_pr"
+        repositories:
+          - "pallets/click"
+          - "Textualize/rich"
+          - "prompt-toolkit/python-prompt-toolkit"
+          - "tiangolo/typer"
+          - "google/python-fire"
+          - "willmcgugan/rich"
+          - "tartley/colorama"
+          - "peterbrittain/asciimatics"
+          - "Textualize/textual"
+          - "jquast/blessed"
+          - "willmcgugan/rich-cli"
+          - "tqdm/tqdm"
+          - "verigak/progress"
+          - "rsalmei/alive-progress"
+          - "pgjones/hypercorn"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Package Management & Build Tools
+      - type: "github_pr"
+        repositories:
+          - "pypa/pip"
+          - "python-poetry/poetry"
+          - "astral-sh/uv"
+          - "pypa/setuptools"
+          - "pypa/virtualenv"
+          - "pypa/pipenv"
+          - "pypa/packaging"
+          - "pypa/build"
+          - "conda/conda"
+          - "mamba-org/mamba"
+          - "pdm-project/pdm"
+          - "pypa/twine"
+          - "pypa/wheel"
+          - "bndr/pipreqs"
+          - "jazzband/pip-tools"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Security & Cryptography
+      - type: "github_pr"
+        repositories:
+          - "pyca/cryptography"
+          - "pyca/pynacl"
+          - "getsentry/sentry-python"
+          - "pyca/bcrypt"
+          - "jaraco/keyring"
+          - "paramiko/paramiko"
+          - "certbot/certbot"
+          - "googleapis/google-auth-library-python"
+          - "lepture/authlib"
+          - "jpadilla/pyjwt"
+          - "mpdavis/python-jose"
+          - "pyauth/pyotp"
+          - "SecurityInnovation/PGPy"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Performance & Optimization
+      - type: "github_pr"
+        repositories:
+          - "numba/numba"
+          - "cython/cython"
+          - "pypy/pypy"
+          - "exaloop/codon"
+          - "python-attrs/attrs"
+          - "samuelcolvin/pydantic"
+          - "ijl/orjson"
+          - "ultrajson/ultrajson"
+          - "simplejson/simplejson"
+          - "python-rapidjson/python-rapidjson"
+          - "msgpack/msgpack-python"
+          - "uqfoundation/dill"
+          - "cloudpipe/cloudpickle"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Image Processing
+      - type: "github_pr"
+        repositories:
+          - "python-pillow/Pillow"
+          - "opencv/opencv-python"
+          - "scikit-image/scikit-image"
+          - "imageio/imageio"
+          - "python-visualization/folium"
+          - "ageitgey/face_recognition"
+          - "jrosebr1/imutils"
+          - "uploadcare/pillow-simd"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # NLP Libraries
+      - type: "github_pr"
+        repositories:
+          - "explosion/spaCy"
+          - "nltk/nltk"
+          - "RaRe-Technologies/gensim"
+          - "sloria/TextBlob"
+          - "huggingface/tokenizers"
+          - "facebookresearch/fairseq"
+          - "allenai/allennlp"
+          - "google-research/bert"
+          - "flairNLP/flair"
+          - "deepset-ai/haystack"
+          - "stanfordnlp/stanza"
+          - "mozilla/DeepSpeech"
+          - "coqui-ai/TTS"
+          - "jamesturk/jellyfish"
+          - "seatgeek/thefuzz"
+          - "life4/textdistance"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Game Development
+      - type: "github_pr"
+        repositories:
+          - "pygame/pygame"
+          - "pythonarcade/arcade"
+          - "panda3d/panda3d"
+          - "kitao/pyxel"
+          - "pyglet/pyglet"
+          - "renpy/renpy"
+          - "panda3d/panda3d"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # GUI Frameworks
+      - type: "github_pr"
+        repositories:
+          - "PySimpleGUI/PySimpleGUI"
+          - "kivy/kivy"
+          - "wxWidgets/Phoenix"
+          - "beeware/toga"
+          - "flexxui/flexx"
+          - "chriskiehl/Gooey"
+          - "PyQt5/PyQt"
+          - "pyside/pyside2"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # DevOps & Automation
+      - type: "github_pr"
+        repositories:
+          - "ansible/ansible"
+          - "fabric/fabric"
+          - "benoitc/gunicorn"
+          - "unbit/uwsgi"
+          - "saltstack/salt"
+          - "apache/airflow"
+          - "PrefectHQ/prefect"
+          - "dagster-io/dagster"
+          - "spotify/luigi"
+          - "celery/celery"
+          - "rq/rq"
+          - "coleifer/huey"
+          - "Netflix/metaflow"
+          - "quantumblacklabs/kedro"
+          - "ploomber/ploomber"
+          - "apache/libcloud"
+          - "boto/boto3"
+          - "docker/docker-py"
+          - "kubernetes-client/python"
+          - "pulumi/pulumi"
+          - "ansible/ansible-runner"
+          - "pyinfra-dev/pyinfra"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3500
+
+      # API & GraphQL
+      - type: "github_pr"
+        repositories:
+          - "graphql-python/graphene"
+          - "strawberry-graphql/strawberry"
+          - "mirumee/ariadne"
+          - "graphql-python/graphql-core"
+          - "encode/apistar"
+          - "marshmallow-code/marshmallow"
+          - "koxudaxi/datamodel-code-generator"
+          - "grpc/grpc"
+          - "danielgtaylor/python-betamax"
+          - "getsentry/responses"
+          - "kevin1024/vcrpy"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Scientific Computing
+      - type: "github_pr"
+        repositories:
+          - "sympy/sympy"
+          - "astropy/astropy"
+          - "sunpy/sunpy"
+          - "biopython/biopython"
+          - "PyBaMM-team/PyBaMM"
+          - "deepchem/deepchem"
+          - "rdkit/rdkit"
+          - "mdanalysis/mdanalysis"
+          - "pyscf/pyscf"
+          - "pymatgen/pymatgen"
+          - "materialsproject/fireworks"
+          - "qutip/qutip"
+          - "projectq-framework/ProjectQ"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Async Libraries
+      - type: "github_pr"
+        repositories:
+          - "aio-libs/aiofiles"
+          - "aio-libs/aiodns"
+          - "aio-libs/aioredis-py"
+          - "aio-libs/aiomysql"
+          - "aio-libs/aiopg"
+          - "timofurrer/awesome-asyncio"
+          - "python-trio/trio-asyncio"
+          - "agronholm/anyio"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Popular Applications & Tools
+      - type: "github_pr"
+        repositories:
+          - "ytdl-org/youtube-dl"
+          - "yt-dlp/yt-dlp"
+          - "soimort/you-get"
+          - "streamlit/streamlit"
+          - "gradio-app/gradio"
+          - "jupyterlab/jupyterlab"
+          - "jupyter/notebook"
+          - "ipython/ipython"
+          - "spyder-ide/spyder"
+          - "sphinx-doc/sphinx"
+          - "mkdocs/mkdocs"
+          - "getpelican/pelican"
+          - "getnikola/nikola"
+          - "cloudflare/python-cloudflare"
+          - "home-assistant/core"
+          - "mitmproxy/mitmproxy"
+          - "locustio/locust"
+          - "httpie/httpie"
+          - "certbot/certbot"
+          - "ansible/awx"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 4000
+
+      # Configuration & Serialization
+      - type: "github_pr"
+        repositories:
+          - "yaml/pyyaml"
+          - "python-attrs/cattrs"
+          - "omry/omegaconf"
+          - "facebookresearch/hydra"
+          - "google/gin-config"
+          - "keleshev/schema"
+          - "alecthomas/voluptuous"
+          - "Julian/jsonschema"
+          - "pyeve/cerberus"
+          - "holoviz/param"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Date & Time
+      - type: "github_pr"
+        repositories:
+          - "dateutil/dateutil"
+          - "arrow-py/arrow"
+          - "sdispater/pendulum"
+          - "dr-prodigy/python-holidays"
+          - "gweis/isodate"
+          - "mitsuhiko/when.py"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # File Processing & Utilities
+      - type: "github_pr"
+        repositories:
+          - "python-excel/xlrd"
+          - "python-excel/xlwt"
+          - "jmcnamara/XlsxWriter"
+          - "openpyxl/openpyxl"
+          - "elapouya/python-docx"
+          - "mstamy2/PyPDF2"
+          - "pikepdf/pikepdf"
+          - "pyparsing/pyparsing"
+          - "cdgriffith/Box"
+          - "benhoyt/scandir"
+          - "gorakhargosh/watchdog"
+          - "ActiveState/appdirs"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Logging & Debugging
+      - type: "github_pr"
+        repositories:
+          - "Delgan/loguru"
+          - "hynek/structlog"
+          - "madzak/python-json-logger"
+          - "cool-RR/PySnooper"
+          - "gruns/icecream"
+          - "gotcha/ipdb"
+          - "inducer/pudb"
+          - "eliben/pycparser"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Email & Communication
+      - type: "github_pr"
+        repositories:
+          - "kootenpv/yagmail"
+          - "mailgun/flanker"
+          - "sabuhish/fastapi-mail"
+          - "nylas/nylas-python"
+          - "modoboa/modoboa"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+      # Finance & Trading
+      - type: "github_pr"
+        repositories:
+          - "quantopian/zipline"
+          - "ranaroussi/yfinance"
+          - "bukosabino/ta"
+          - "pmorissette/bt"
+          - "quantopian/alphalens"
+          - "quantopian/pyfolio"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2020-01-01"
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py"]
+          exclude_authors: ["dependabot", "dependabot[bot]"]
+          max_prs_per_repo: 3000
+
+    # Code format options
+    options:
+      languages: ["python"]
+      max_diff_lines: 500
+      include_context: true
+      parse_commit_message: true
+
+# Quality filters
+quality:
+  min_text_length: 50
+  max_text_length: 50000

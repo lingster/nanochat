@@ -38,16 +38,48 @@ pip install -r requirements.txt
 
 ## Quick Start
 
+### Option 1: Download from HuggingFace Hub (Fastest)
+
+For large-scale Python code datasets (recommended for reaching 50GB+):
+
+```bash
+# Download 30GB from The Stack (Python)
+uv run python scripts/download_huggingface_datasets.py \
+    --dataset the-stack-python \
+    --max-size-gb 30 \
+    --output-dir /mnt/archive/nanochat/huggingface_data
+
+# See all available datasets
+uv run python scripts/download_huggingface_datasets.py --list
+```
+
+See [scripts/README_DATASETS.md](scripts/README_DATASETS.md) for full documentation.
+
+### Option 2: Generate from Custom Sources
+
 1. Set up your configuration file (see `examples/` directory)
 
-2. For GitHub PR extraction, set your token:
+2. (Optional) Configure data storage location:
+```bash
+# Option 1: Set environment variable (applies to all runs)
+export NANOCHAT_DATA_DIR="/mnt/archive/nanochat"
+
+# Option 2: Use command-line argument (overrides config and env var)
+# See step 4 below
+```
+
+3. For GitHub PR extraction, set your token:
 ```bash
 export GITHUB_TOKEN="your_github_token_here"
 ```
 
-3. Run the generator:
+4. Run the generator:
 ```bash
+# Use default location from config file
 python generate_data.py --config examples/config_github_code.yaml
+
+# Or override output directory
+python generate_data.py --config examples/config_github_code.yaml --output-dir /path/to/output
 ```
 
 ## Resume/Cache Functionality
@@ -123,7 +155,8 @@ Configuration is done via YAML files. See the `examples/` directory for complete
 version: "1.0"
 
 global:
-  output_dir: "./output"
+  output_dir: "/mnt/archive/nanochat"  # Default storage location
+  cache_dir: "/mnt/archive/nanochat/.cache"  # Cache for resumption state
   log_level: "INFO"
 
 auth:
@@ -136,6 +169,31 @@ jobs:
     sources: [...]
     options: {...}
 ```
+
+### Output Directory Configuration
+
+The output directory can be configured in three ways (in order of precedence):
+
+1. **CLI argument** (highest priority):
+   ```bash
+   python generate_data.py --config config.yaml --output-dir /custom/path
+   ```
+
+2. **Environment variable**:
+   ```bash
+   export NANOCHAT_DATA_DIR="/mnt/archive/nanochat"
+   python generate_data.py --config config.yaml
+   ```
+
+3. **Config file** (lowest priority):
+   ```yaml
+   global:
+     output_dir: "/mnt/archive/nanochat"
+   ```
+
+If none are specified, the default is `./output`.
+
+The tool automatically creates the output directory (and parent directories) if it doesn't exist.
 
 ### Data Sources
 
