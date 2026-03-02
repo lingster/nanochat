@@ -1,0 +1,55 @@
+# Example configuration for generating code training data from GitHub PRs
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
+  log_level: "INFO"
+
+# Authentication
+auth:
+  github_token: "${GITHUB_TOKEN}"  # Set GITHUB_TOKEN environment variable
+
+# Jobs
+jobs:
+  # Extract code examples from GitHub Pull Requests
+  - name: "github_code_examples"
+    type: "jsonl_code"
+    output_file: "github_code_examples.jsonl"
+
+    sources:
+      # Popular Python repositories
+      - type: "github_pr"
+        repositories:
+          - "pallets/flask"
+          - "django/django"
+          - "fastapi/fastapi"
+          - "psf/requests"
+          - "python/cpython"
+        options:
+          state: "closed"
+          merged_only: true
+          date_from: "2024-01-01"
+          date_to: "2026-01-22"
+          labels: []  # All labels
+          min_commits: 1
+          max_commits: 10
+          min_changes: 10
+          max_changes: 500
+          languages: ["py", "python"]
+          exclude_authors: ["dependabot", "dependabot[bot]", "github-actions[bot]"]
+          include_diff: true
+          max_prs_per_repo: 100
+
+    # Code format options
+    options:
+      languages: ["python"]
+      max_diff_lines: 500
+      include_context: true
+      parse_commit_message: true
+
+# Quality filters
+quality:
+  min_text_length: 50
+  max_text_length: 50000

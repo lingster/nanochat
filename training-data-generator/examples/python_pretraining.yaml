@@ -1,0 +1,344 @@
+# Python Ecosystem Pretraining Data Configuration
+# Comprehensive scraping of top Python resources for LLM pretraining
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
+  log_level: "INFO"
+  num_workers: 8
+
+# Jobs
+jobs:
+  # Generate Parquet files from Python web resources
+  - name: "python_web_pretraining"
+    type: "parquet"
+    output_file: "python_pretraining_shard_{index:05d}.parquet"
+
+    sources:
+      # Official Python Documentation
+      - type: "web"
+        urls:
+          - "https://docs.python.org/3/"
+          - "https://www.python.org/doc/"
+          - "https://peps.python.org/"
+          - "https://wiki.python.org/"
+        options:
+          follow_links: true
+          max_depth: 3
+          url_pattern: "^https://(docs\\.python\\.org|www\\.python\\.org|peps\\.python\\.org|wiki\\.python\\.org)/"
+          same_domain_only: false
+          max_pages: 2000
+          rate_limit: 1.0
+
+      # Python Tutorial Sites - Tier 1 (Most Popular)
+      - type: "web"
+        urls:
+          - "https://realpython.com/"
+          - "https://www.w3schools.com/python/"
+          - "https://www.learnpython.org/"
+          - "https://www.programiz.com/python-programming"
+          - "https://www.tutorialspoint.com/python/"
+          - "https://www.geeksforgeeks.org/python-programming-language/"
+          - "https://www.freecodecamp.org/news/tag/python/"
+          - "https://python.land/"
+          - "https://pythonbasics.org/"
+          - "https://www.pythontutorial.net/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 500
+          rate_limit: 1.5
+
+      # Python Guides & Best Practices
+      - type: "web"
+        urls:
+          - "https://docs.python-guide.org/"
+          - "https://google.github.io/styleguide/pyguide.html"
+          - "https://pep8.org/"
+          - "https://www.pythoncheatsheet.org/"
+          - "https://python-patterns.guide/"
+          - "https://pythonspeed.com/"
+          - "https://effectivepython.com/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 200
+          rate_limit: 1.0
+
+      # Web Frameworks
+      - type: "web"
+        urls:
+          - "https://docs.djangoproject.com/"
+          - "https://flask.palletsprojects.com/"
+          - "https://fastapi.tiangolo.com/"
+          - "https://www.tornadoweb.org/en/stable/"
+          - "https://trypyramid.com/"
+          - "https://bottlepy.org/"
+          - "https://cherrypy.dev/"
+          - "https://www.starlette.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 300
+          rate_limit: 1.0
+
+      # Data Science & Machine Learning
+      - type: "web"
+        urls:
+          - "https://numpy.org/doc/"
+          - "https://pandas.pydata.org/docs/"
+          - "https://scikit-learn.org/stable/documentation.html"
+          - "https://pytorch.org/docs/"
+          - "https://www.tensorflow.org/api_docs/python"
+          - "https://keras.io/guides/"
+          - "https://matplotlib.org/stable/contents.html"
+          - "https://seaborn.pydata.org/"
+          - "https://docs.scipy.org/"
+          - "https://jupyter.org/documentation"
+          - "https://ipython.readthedocs.io/"
+          - "https://plotly.com/python/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 400
+          rate_limit: 1.0
+
+      # Testing & Quality
+      - type: "web"
+        urls:
+          - "https://docs.pytest.org/"
+          - "https://docs.python.org/3/library/unittest.html"
+          - "https://hypothesis.readthedocs.io/"
+          - "https://coverage.readthedocs.io/"
+          - "https://pylint.readthedocs.io/"
+          - "https://flake8.pycqa.org/"
+          - "https://mypy.readthedocs.io/"
+          - "https://black.readthedocs.io/"
+          - "https://pycqa.github.io/isort/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 200
+          rate_limit: 1.0
+
+      # Async & Concurrency
+      - type: "web"
+        urls:
+          - "https://docs.python.org/3/library/asyncio.html"
+          - "https://trio.readthedocs.io/"
+          - "https://www.python.org/dev/peps/pep-3156/"
+          - "https://aiohttp.readthedocs.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # Database & ORM
+      - type: "web"
+        urls:
+          - "https://www.sqlalchemy.org/library.html"
+          - "https://docs.peewee-orm.com/"
+          - "https://docs.ponyorm.org/"
+          - "https://www.psycopg.org/docs/"
+          - "https://pymongo.readthedocs.io/"
+          - "https://redis-py.readthedocs.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 200
+          rate_limit: 1.0
+
+      # API & Networking
+      - type: "web"
+        urls:
+          - "https://requests.readthedocs.io/"
+          - "https://www.python-httpx.org/"
+          - "https://docs.python.org/3/library/urllib.html"
+          - "https://www.crummy.com/software/BeautifulSoup/bs4/doc/"
+          - "https://scrapy.org/doc/"
+          - "https://selenium-python.readthedocs.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 200
+          rate_limit: 1.0
+
+      # Package Management & Tools
+      - type: "web"
+        urls:
+          - "https://pip.pypa.io/en/stable/"
+          - "https://python-poetry.org/docs/"
+          - "https://docs.astral.sh/uv/"
+          - "https://virtualenv.pypa.io/"
+          - "https://docs.conda.io/"
+          - "https://setuptools.pypa.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # Game Development
+      - type: "web"
+        urls:
+          - "https://www.pygame.org/docs/"
+          - "https://arcade.academy/"
+          - "https://www.panda3d.org/manual/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # GUI Development
+      - type: "web"
+        urls:
+          - "https://docs.python.org/3/library/tkinter.html"
+          - "https://doc.qt.io/qtforpython/"
+          - "https://kivy.org/doc/stable/"
+          - "https://wxpython.org/pages/overview/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # Security & Cryptography
+      - type: "web"
+        urls:
+          - "https://cryptography.io/en/latest/"
+          - "https://pynacl.readthedocs.io/"
+          - "https://docs.python.org/3/library/hashlib.html"
+          - "https://passlib.readthedocs.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # CLI & Automation
+      - type: "web"
+        urls:
+          - "https://click.palletsprojects.com/"
+          - "https://docs.python.org/3/library/argparse.html"
+          - "https://python-prompt-toolkit.readthedocs.io/"
+          - "https://rich.readthedocs.io/"
+          - "https://typer.tiangolo.com/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # Serialization & Data Formats
+      - type: "web"
+        urls:
+          - "https://docs.python.org/3/library/json.html"
+          - "https://pyyaml.org/wiki/PyYAMLDocumentation"
+          - "https://toml.io/en/"
+          - "https://msgpack.org/"
+          - "https://lxml.de/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # Performance & Optimization
+      - type: "web"
+        urls:
+          - "https://numba.pydata.org/"
+          - "https://cython.readthedocs.io/"
+          - "https://docs.python.org/3/library/profile.html"
+          - "https://pypy.org/documentation.html"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # Image Processing
+      - type: "web"
+        urls:
+          - "https://pillow.readthedocs.io/"
+          - "https://opencv-python-tutroals.readthedocs.io/"
+          - "https://scikit-image.org/docs/stable/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # Natural Language Processing
+      - type: "web"
+        urls:
+          - "https://spacy.io/usage"
+          - "https://www.nltk.org/"
+          - "https://radimrehurek.com/gensim/"
+          - "https://textblob.readthedocs.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # DevOps & Deployment
+      - type: "web"
+        urls:
+          - "https://docs.docker.com/language/python/"
+          - "https://docs.ansible.com/ansible/latest/index.html"
+          - "https://www.fabfile.org/"
+          - "https://docs.gunicorn.org/"
+          - "https://uwsgi-docs.readthedocs.io/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # Community & Learning Platforms
+      - type: "web"
+        urls:
+          - "https://stackoverflow.com/questions/tagged/python"
+          - "https://www.reddit.com/r/Python/"
+          - "https://www.reddit.com/r/learnpython/"
+          - "https://dev.to/t/python"
+          - "https://pypi.org/"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 300
+          rate_limit: 2.0
+
+      # Python News & Blogs
+      - type: "web"
+        urls:
+          - "https://www.python.org/blogs/"
+          - "https://planetpython.org/"
+          - "https://pythonweekly.com/"
+          - "https://pycoder.net/"
+          - "https://talkpython.fm/"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 200
+          rate_limit: 1.5
+
+    # Output options
+    options:
+      shard_size_mb: 100
+      compression: "zstd"
+      row_group_size: 1024
+      min_text_length: 200
+      max_text_length: 1000000
+      deduplication: true
+
+# Quality filters
+quality:
+  min_text_length: 100
+  max_text_length: 1000000
+  content_filters:
+    - "normalize_whitespace"

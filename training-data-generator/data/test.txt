@@ -1,0 +1,12 @@
+This is a test document for the training data generator smoke test.
+
+Machine learning is a subset of artificial intelligence that focuses on the development of algorithms
+and statistical models that enable computers to improve their performance on a specific task through experience.
+
+Deep learning is a specialized branch of machine learning that uses neural networks with multiple layers
+to progressively extract higher-level features from raw input. This hierarchical approach has proven
+particularly effective for tasks such as image recognition, natural language processing, and speech recognition.
+
+Natural language processing (NLP) is a field of artificial intelligence that focuses on the interaction
+between computers and human language. It involves developing algorithms and models that can understand,
+interpret, and generate human language in a valuable way.

@@ -1,0 +1,41 @@
+# Smoke test configuration - minimal test with local files only
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
+  log_level: "DEBUG"
+  num_workers: 1
+
+# Jobs
+jobs:
+  # Simple test job with local files only
+  - name: "smoke_test"
+    type: "parquet"
+    output_file: "test_shard_{index:05d}.parquet"
+
+    sources:
+      # Include local test files
+      - type: "files"
+        paths:
+          - "./data/**/*.txt"
+        options:
+          recursive: true
+          encoding: "utf-8"
+
+    # Output options
+    options:
+      shard_size_mb: 10
+      compression: "zstd"
+      row_group_size: 100
+      min_text_length: 50
+      max_text_length: 1000000
+      deduplication: true
+
+# Quality filters
+quality:
+  min_text_length: 50
+  max_text_length: 1000000
+  content_filters:
+    - "normalize_whitespace"

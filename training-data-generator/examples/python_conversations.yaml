@@ -1,0 +1,563 @@
+# Python Q&A Conversation Data Configuration
+# Extract Q&A pairs from Python documentation and tutorial sites
+# Extended with 100+ FAQ sources for comprehensive training data
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
+  log_level: "INFO"
+  num_workers: 4
+
+# Jobs
+jobs:
+  # Generate conversation data from Python Q&A resources
+  - name: "python_qa_conversations"
+    type: "jsonl_conversation"
+    output_file: "python_conversations.jsonl"
+
+    sources:
+      # ============================================================
+      # OFFICIAL PYTHON DOCUMENTATION & FAQ
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://docs.python.org/3/faq/"
+          - "https://docs.python.org/3/faq/programming.html"
+          - "https://docs.python.org/3/faq/library.html"
+          - "https://docs.python.org/3/faq/extending.html"
+          - "https://docs.python.org/3/faq/design.html"
+          - "https://docs.python.org/3/faq/general.html"
+          - "https://docs.python.org/3/tutorial/datastructures.html"
+          - "https://docs.python.org/3/tutorial/modules.html"
+          - "https://docs.python.org/3/tutorial/errors.html"
+          - "https://docs.python.org/3/tutorial/venv.html"
+          - "https://docs.python.org/3/howto/logging.html"
+          - "https://docs.python.org/3/howto/regex.html"
+          - "https://docs.python.org/3/howto/argparse.html"
+          - "https://docs.python.org/3/library/datetime.html"
+          - "https://docs.python.org/3/library/typing.html"
+          - "https://docs.python.org/3/library/collections.html"
+          - "https://docs.python.org/3/library/pathlib.html"
+          - "https://docs.python.org/3/library/multiprocessing.html"
+          - "https://docs.python.org/3/library/asyncio-dev.html"
+          - "https://docs.python.org/3/library/pdb.html"
+          - "https://docs.python.org/3/library/contextlib.html"
+          - "https://docs.python.org/3/library/venv.html"
+          - "https://docs.python.org/3/library/unittest.html"
+          - "https://docs.python.org/3/library/os.path.html"
+        options:
+          follow_links: true
+          max_depth: 2
+          url_pattern: "^https://docs.python.org/3/"
+          max_pages: 200
+          rate_limit: 1.0
+
+      # ============================================================
+      # PYTHON INTERVIEW QUESTIONS & FAQ SITES
+      # ============================================================
+      - type: "web"
+        urls:
+          # Interview Questions
+          - "https://www.geeksforgeeks.org/python/python-interview-questions/"
+          - "https://www.datacamp.com/blog/top-python-interview-questions-and-answers"
+          - "https://www.w3schools.com/python/python_interview_questions.asp"
+          - "https://www.interviewbit.com/python-interview-questions/"
+          - "https://www.edureka.co/blog/interview-questions/python-interview-questions"
+          - "https://pynative.com/python/interview-questions/"
+          - "https://www.mygreatlearning.com/blog/python-interview-questions/"
+          - "https://mindmajix.com/python-interview-questions"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.5
+
+      # ============================================================
+      # REAL PYTHON TUTORIALS (Comprehensive Q&A Style)
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://realpython.com/tutorials/basics/"
+          - "https://realpython.com/tutorials/best-practices/"
+          - "https://realpython.com/python-exceptions/"
+          - "https://realpython.com/python-f-strings/"
+          - "https://realpython.com/python-type-checking/"
+          - "https://realpython.com/python-testing/"
+          - "https://realpython.com/python-debugging-pdb/"
+          - "https://realpython.com/python-requests/"
+          - "https://realpython.com/python-pathlib/"
+          - "https://realpython.com/python-virtual-environments-a-primer/"
+          - "https://realpython.com/python-memory-management/"
+          - "https://realpython.com/python-with-statement/"
+          - "https://realpython.com/async-io-python/"
+          - "https://realpython.com/python-concurrency/"
+          - "https://realpython.com/python3-object-oriented-programming/"
+          - "https://realpython.com/beautiful-soup-web-scraper-python/"
+          - "https://realpython.com/python-json/"
+          - "https://realpython.com/api-integration-in-python/"
+          - "https://realpython.com/fastapi-python-web-apis/"
+          - "https://realpython.com/pytest-python-testing/"
+          - "https://realpython.com/command-line-interfaces-python-argparse/"
+          - "https://realpython.com/ruff-python/"
+          - "https://realpython.com/python-string-formatting/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 300
+          rate_limit: 1.5
+
+      # ============================================================
+      # GEEKSFORGEEKS PYTHON TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.geeksforgeeks.org/python/python-exception-handling/"
+          - "https://www.geeksforgeeks.org/python/python-try-except/"
+          - "https://www.geeksforgeeks.org/python/regular-expression-python-examples/"
+          - "https://www.geeksforgeeks.org/python/polymorphism-in-python/"
+          - "https://www.geeksforgeeks.org/python/differences-and-applications-of-list-tuple-set-and-dictionary-in-python/"
+          - "https://www.geeksforgeeks.org/python/comprehensions-in-python/"
+          - "https://www.geeksforgeeks.org/python/python-dictionary-comprehension/"
+          - "https://www.geeksforgeeks.org/python/python-lambda-anonymous-functions-filter-map-reduce/"
+          - "https://www.geeksforgeeks.org/python/map-reduce-and-filter-operations-in-python/"
+          - "https://www.geeksforgeeks.org/python/garbage-collection-python/"
+          - "https://www.geeksforgeeks.org/python/memory-management-in-python/"
+          - "https://www.geeksforgeeks.org/python/command-line-option-and-argument-parsing-using-argparse-in-python/"
+          - "https://www.geeksforgeeks.org/python/context-manager-in-python/"
+          - "https://www.geeksforgeeks.org/python/debugging-python-code-using-breakpoint-and-pdb/"
+          - "https://www.geeksforgeeks.org/python/python-requests-tutorial/"
+          - "https://www.geeksforgeeks.org/python/pathlib-module-in-python/"
+          - "https://www.geeksforgeeks.org/python/using-python-environment-variables-with-python-dotenv/"
+          - "https://www.geeksforgeeks.org/python/python-collections-module/"
+          - "https://www.geeksforgeeks.org/python/implementing-web-scraping-python-beautiful-soup/"
+          - "https://www.geeksforgeeks.org/python/connecting-postgresql-with-sqlalchemy-in-python/"
+          - "https://www.geeksforgeeks.org/python/creating-first-rest-api-with-fastapi/"
+          - "https://www.geeksforgeeks.org/python/building-restful-apis-with-fastapi/"
+          - "https://www.geeksforgeeks.org/data-visualization/data-visualisation-in-python-using-matplotlib-and-seaborn/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 250
+          rate_limit: 1.5
+
+      # ============================================================
+      # W3SCHOOLS PYTHON TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.w3schools.com/python/python_exercises.asp"
+          - "https://www.w3schools.com/python/python_try_except.asp"
+          - "https://www.w3schools.com/python/python_regex.asp"
+          - "https://www.w3schools.com/python/python_polymorphism.asp"
+          - "https://www.w3schools.com/python/python_inheritance.asp"
+          - "https://www.w3schools.com/python/python_lists_comprehension.asp"
+          - "https://www.w3schools.com/python/python_decorators.asp"
+          - "https://www.w3schools.com/python/python_datetime.asp"
+          - "https://www.w3schools.com/python/python_string_formatting.asp"
+          - "https://www.w3schools.com/python/python_tuples.asp"
+          - "https://www.w3schools.com/python/module_requests.asp"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # ============================================================
+      # DATACAMP PYTHON TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.datacamp.com/tutorial/python-garbage-collection"
+          - "https://www.datacamp.com/tutorial/python-try-except"
+          - "https://www.datacamp.com/tutorial/f-string-formatting-in-python"
+          - "https://www.datacamp.com/tutorial/python-f-string"
+          - "https://www.datacamp.com/tutorial/python-dictionary-comprehension"
+          - "https://www.datacamp.com/tutorial/sqlalchemy-tutorial-examples"
+          - "https://www.datacamp.com/tutorial/making-http-requests-in-python"
+          - "https://www.datacamp.com/tutorial/comprehensive-tutorial-on-using-pathlib-in-python-for-file-system-manipulation"
+          - "https://www.datacamp.com/tutorial/seaborn-python-tutorial"
+          - "https://www.datacamp.com/tutorial/converting-strings-datetime-objects"
+          - "https://www.datacamp.com/tutorial/modules-in-python"
+          - "https://www.datacamp.com/tutorial/writing-custom-context-managers-in-python"
+          - "https://www.datacamp.com/tutorial/pytest-tutorial-a-hands-on-guide-to-unit-testing"
+          - "https://www.datacamp.com/tutorial/python-argparse"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 200
+          rate_limit: 1.5
+
+      # ============================================================
+      # PROGRAMIZ PYTHON TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.programiz.com/python-programming/examples"
+          - "https://www.programiz.com/python-programming/exception-handling"
+          - "https://www.programiz.com/python-programming/regex"
+          - "https://www.programiz.com/python-programming/polymorphism"
+          - "https://www.programiz.com/python-programming/datetime"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # ============================================================
+      # HITCHHIKER'S GUIDE TO PYTHON
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://docs.python-guide.org/writing/structure/"
+          - "https://docs.python-guide.org/writing/logging/"
+          - "https://docs.python-guide.org/writing/tests/"
+          - "https://docs.python-guide.org/dev/virtualenvs/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # DIGITALOCEAN PYTHON TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.digitalocean.com/community/tutorials/python-string-to-datetime-strptime"
+          - "https://www.digitalocean.com/community/tutorials/how-to-work-with-web-data-using-requests-and-beautiful-soup-with-python-3"
+          - "https://www.digitalocean.com/community/tutorials/how-to-import-modules-in-python-3"
+          - "https://www.digitalocean.com/community/tutorials/how-to-use-the-pathlib-module-to-manipulate-filesystem-paths-in-python-3"
+          - "https://www.digitalocean.com/community/tutorials/python-breakpoint"
+          - "https://www.digitalocean.com/community/tutorials/python-multiprocessing-example"
+          - "https://www.digitalocean.com/community/tutorials/how-to-use-argparse-to-write-command-line-programs-in-python"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # LEARNPYTHON & OTHER INTERACTIVE TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.learnpython.org/"
+          - "https://www.learnpython.org/en/Map,_Filter,_Reduce"
+          - "https://www.learnpython.org/en/Regular_Expressions"
+          - "https://www.pythontutorial.net/"
+          - "https://www.pythontutorial.net/python-basics/python-type-hints/"
+          - "https://www.pythontutorial.net/advanced-python/python-context-managers/"
+          - "https://python.land/deep-dives/python-try-except"
+          - "https://python.land/virtual-environments/virtualenv"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # ============================================================
+      # FREECODECAMP PYTHON TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.freecodecamp.org/news/python-f-strings-tutorial-how-to-use-f-strings-for-string-formatting/"
+          - "https://www.freecodecamp.org/news/how-to-use-pathlib-module-in-python/"
+          - "https://www.freecodecamp.org/news/lambda-functions-in-python/"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 50
+          rate_limit: 1.5
+
+      # ============================================================
+      # DATA SCIENCE & ML LIBRARIES FAQ
+      # ============================================================
+      - type: "web"
+        urls:
+          # Scikit-learn
+          - "https://scikit-learn.org/stable/faq.html"
+          - "https://scikit-learn.org/stable/tutorial/index.html"
+          # NumPy & Pandas
+          - "https://numpy.org/doc/stable/user/absolute_beginners.html"
+          - "https://pandas.pydata.org/docs/getting_started/intro_tutorials/"
+          # Seaborn & Matplotlib
+          - "https://seaborn.pydata.org/"
+          - "https://seaborn.pydata.org/tutorial.html"
+          - "https://seaborn.pydata.org/tutorial/introduction.html"
+          # PyTorch
+          - "https://pytorch.org/tutorials/"
+          # Data Science Handbook
+          - "https://jakevdp.github.io/PythonDataScienceHandbook/05.02-introducing-scikit-learn.html"
+          - "https://jakevdp.github.io/PythonDataScienceHandbook/04.14-visualization-with-seaborn.html"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 300
+          rate_limit: 1.0
+
+      # ============================================================
+      # WEB FRAMEWORKS FAQ (Django, Flask, FastAPI)
+      # ============================================================
+      - type: "web"
+        urls:
+          # Django
+          - "https://docs.djangoproject.com/en/stable/faq/"
+          # Flask
+          - "https://flask.palletsprojects.com/en/stable/tutorial/"
+          # FastAPI
+          - "https://fastapi.tiangolo.com/"
+          - "https://fastapi.tiangolo.com/tutorial/"
+          - "https://fastapi.tiangolo.com/tutorial/first-steps/"
+          - "https://fastapi.tiangolo.com/python-types/"
+          # Auth0 Flask Guide
+          - "https://auth0.com/blog/developing-restful-apis-with-python-and-flask/"
+          - "https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 250
+          rate_limit: 1.0
+
+      # ============================================================
+      # TESTING & DEBUGGING
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://docs.pytest.org/en/stable/how-to/index.html"
+          - "https://docs.pytest.org/en/stable/how-to/unittest.html"
+          - "https://pytest.org/"
+          - "https://betterstack.com/community/guides/testing/pytest-guide/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # ============================================================
+      # PYTHON BEST PRACTICES & PATTERNS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://python-patterns.guide/"
+          - "https://peps.python.org/pep-0008/"
+          - "https://peps.python.org/pep-0484/"
+          - "https://peps.python.org/pep-0498/"
+          - "https://book.pythontips.com/en/latest/map_filter.html"
+          - "https://book.pythontips.com/en/latest/collections.html"
+          - "https://book.pythontips.com/en/latest/context_managers.html"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 150
+          rate_limit: 1.0
+
+      # ============================================================
+      # DATABASE & ORM TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://coderpad.io/blog/development/sqlalchemy-with-postgresql/"
+          - "https://www.learndatasci.com/tutorials/using-databases-python-postgres-sqlalchemy-and-alembic/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # WEB SCRAPING TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.learndatasci.com/tutorials/ultimate-guide-web-scraping-w-python-requests-and-beautifulsoup/"
+          - "https://www.scrapingbee.com/blog/python-web-scraping-beautiful-soup/"
+          - "https://blog.apify.com/web-scraping-with-beautiful-soup/"
+          - "https://opensource.com/article/21/9/web-scraping-python-beautiful-soup"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.5
+
+      # ============================================================
+      # LOGGING & MONITORING BEST PRACTICES
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://betterstack.com/community/guides/logging/python/python-logging-best-practices/"
+          - "https://coralogix.com/blog/python-logging-best-practices-tips/"
+          - "https://signoz.io/guides/python-logging-best-practices/"
+          - "https://www.loggly.com/use-cases/6-python-logging-best-practices-you-should-be-aware-of/"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 50
+          rate_limit: 1.5
+
+      # ============================================================
+      # TYPE HINTS & MYPY
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html"
+          - "https://mypy.readthedocs.io/en/stable/type_inference_and_annotations.html"
+          - "https://betterstack.com/community/guides/scaling-python/python-type-hints/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # ASYNC & CONCURRENCY TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://superfastpython.com/asyncio-vs-threading/"
+          - "https://testdriven.io/blog/concurrency-parallelism-asyncio/"
+          - "https://www.endpointdev.com/blog/2020/10/python-concurrency-asyncio-threading-users/"
+          - "https://itnext.io/practical-guide-to-async-threading-multiprocessing-958e57d7bbb8"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 50
+          rate_limit: 1.5
+
+      # ============================================================
+      # GENERATORS, DECORATORS & ITERATORS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://pymbook.readthedocs.io/en/latest/igd.html"
+          - "https://www.tutorialspoint.com/python/python_generators.htm"
+          - "https://python-course.eu/advanced-python/lambda-filter-reduce-map.php"
+          - "https://python-course.eu/advanced-python/regular-expressions.php"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # FILE HANDLING & I/O TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.datanovia.com/learn/programming/python/additional-tutorials/file-io.html"
+          - "https://www.dataquest.io/blog/read-file-python/"
+          - "https://automatetheboringstuff.com/2e/chapter16/"
+          - "https://www.dataquest.io/blog/python-datetime-tutorial/"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 50
+          rate_limit: 1.5
+
+      # ============================================================
+      # PACKAGE MANAGEMENT & VIRTUAL ENVIRONMENTS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/"
+          - "https://docs.astral.sh/uv/pip/environments/"
+          - "https://pypi.org/project/python-dotenv/"
+          - "https://github.com/theskumar/python-dotenv"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # DATACLASSES, PYDANTIC & DATA STRUCTURES
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://www.attrs.org/en/stable/why.html"
+          - "https://docs.pydantic.dev/latest/concepts/dataclasses/"
+          - "https://zetcode.com/python/fstring/"
+          - "https://zetcode.com/python/argparse/"
+          - "https://zetcode.com/python/pathlib/"
+          - "https://zetcode.com/python/multiprocessing/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # CODE QUALITY & LINTING
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://docs.astral.sh/ruff/"
+          - "https://docs.astral.sh/ruff/faq/"
+          - "https://www.pyopensci.org/python-package-guide/package-structure-code/code-style-linting-format.html"
+          - "https://arjancodes.com/blog/organizing-python-code-with-packages-and-modules/"
+          - "https://arjancodes.com/blog/building-rest-apis-with-python-and-fastapi-tutorial/"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 100
+          rate_limit: 1.0
+
+      # ============================================================
+      # STACK OVERFLOW PYTHON QUESTIONS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://stackoverflow.com/questions/tagged/python?sort=votes&pageSize=50"
+          - "https://stackoverflow.com/questions/tagged/python-3.x?sort=votes&pageSize=50"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 200
+          rate_limit: 2.0
+
+      # ============================================================
+      # GOOGLE DEVELOPERS PYTHON TUTORIALS
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://developers.google.com/edu/python/regular-expressions"
+        options:
+          follow_links: true
+          max_depth: 2
+          max_pages: 50
+          rate_limit: 1.0
+
+      # ============================================================
+      # MISCELLANEOUS PYTHON FAQ RESOURCES
+      # ============================================================
+      - type: "web"
+        urls:
+          - "https://builtin.com/articles/garbage-collection-in-python"
+          - "https://builtin.com/data-science/data-visualization-tutorial"
+          - "https://builtin.com/data-science/python-f-string"
+          - "https://stackabuse.com/map-filter-and-reduce-in-python-with-examples/"
+          - "https://www.codecademy.com/article/understanding-polymorphism-in-python"
+          - "https://www.w3resource.com/python/functional-programming-map-filter-reduce.php"
+          - "https://machinelearningplus.com/python/parallel-processing-python/"
+          - "https://www.sitepoint.com/python-multiprocessing-parallel-programming/"
+          - "https://dateparser.readthedocs.io/"
+          - "https://requests.readthedocs.io/"
+          - "https://www.datanovia.com/learn/programming/python/additional-tutorials/collections-module.html"
+        options:
+          follow_links: true
+          max_depth: 1
+          max_pages: 100
+          rate_limit: 1.5
+
+    # Conversation options
+    options:
+      max_turns: 10
+      validate_roles: true
+      min_content_length: 20
+      deduplicate: true
+
+# Quality filters
+quality:
+  min_text_length: 20
+  max_text_length: 10000

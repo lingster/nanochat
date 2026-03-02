@@ -1,0 +1,48 @@
+# Example configuration for generating JSONL conversation data
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
+  log_level: "INFO"
+
+# Jobs
+jobs:
+  # Generate conversation data from Markdown FAQ files
+  - name: "faq_conversations"
+    type: "jsonl_conversation"
+    output_file: "faq_conversations.jsonl"
+
+    sources:
+      # Parse Markdown files as Q&A
+      - type: "files"
+        paths:
+          - "./docs/faq/**/*.md"
+          - "./docs/guides/**/*.md"
+        options:
+          recursive: true
+          parser: "markdown_qa"
+
+      # Scrape documentation websites
+      - type: "web"
+        urls:
+          - "https://docs.python.org/3/faq/"
+        options:
+          follow_links: true
+          max_depth: 2
+          url_pattern: "^https://docs.python.org/3/faq/"
+          max_pages: 100
+          rate_limit: 1.0
+
+    # Conversation options
+    options:
+      max_turns: 10
+      validate_roles: true
+      min_content_length: 20
+      deduplicate: true
+
+# Quality filters
+quality:
+  min_text_length: 20
+  max_text_length: 10000

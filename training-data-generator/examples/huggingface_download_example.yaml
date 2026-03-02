@@ -1,0 +1,42 @@
+# Example configuration for downloading HuggingFace datasets
+# This is for reference only - the download_huggingface_datasets.py script
+# uses CLI arguments instead of YAML configs
+
+# Usage examples:
+
+# 1. Download The Stack (Python) - 30GB
+#    uv run python scripts/download_huggingface_datasets.py \
+#      --dataset the-stack-python \
+#      --max-size-gb 30 \
+#      --output-dir /mnt/archive/nanochat/huggingface_data
+
+# 2. Download CodeParrot Clean - 8GB
+#    uv run python scripts/download_huggingface_datasets.py \
+#      --dataset codeparrot-clean \
+#      --output-dir /mnt/archive/nanochat/huggingface_data
+
+# 3. Download GitHub Code Python - 15GB
+#    uv run python scripts/download_huggingface_datasets.py \
+#      --dataset github-code-python \
+#      --max-size-gb 15 \
+#      --output-dir /mnt/archive/nanochat/huggingface_data
+
+# 4. List all available datasets
+#    uv run python scripts/download_huggingface_datasets.py --list
+
+# Target: 50GB total
+# Recommended combination:
+#   - The Stack Python: 35GB
+#   - CodeParrot Clean: 8GB
+#   - GitHub Code Python: 7GB
+#   = 50GB total
+
+# Output format:
+#   All datasets are converted to parquet format with schema: {text: string}
+#   Each shard is approximately 100MB
+#   Files are saved to: <output-dir>/<dataset-name>/shard_XXXXX.parquet
+
+# Resume functionality:
+#   - Automatically resumes if interrupted
+#   - State saved in: <output-dir>/<dataset-name>/.{dataset-name}_state.json
+#   - Use --no-resume to start fresh

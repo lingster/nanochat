@@ -1,0 +1,36 @@
+# Test configuration for generating JSONL conversation data
+version: "1.0"
+
+# Global settings
+global:
+  output_dir: "/mnt/archive/nanochat"
+  cache_dir: "/mnt/archive/nanochat/.cache"
+  log_level: "INFO"
+
+# Jobs
+jobs:
+  # Generate conversation data from Markdown FAQ files
+  - name: "faq_conversations_test"
+    type: "jsonl_conversation"
+    output_file: "faq_conversations_test.jsonl"
+
+    sources:
+      # Parse Markdown files as Q&A
+      - type: "files"
+        paths:
+          - "./docs/faq/**/*.md"
+        options:
+          recursive: true
+          parser: "markdown_qa"
+
+    # Conversation options
+    options:
+      max_turns: 10
+      validate_roles: true
+      min_content_length: 20
+      deduplicate: true
+
+# Quality filters
+quality:
+  min_text_length: 20
+  max_text_length: 10000
